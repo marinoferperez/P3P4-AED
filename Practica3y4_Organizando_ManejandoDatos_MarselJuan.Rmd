@@ -495,13 +495,17 @@ names(planes)
 
 ### Ejercicio 10
 
-Incorpora una nueva variable a `flights` denominado `Full_Date` que sea de tipo `character` que incorpore una cadena de texto de la forma `d-m-Y`. Donde `d` indica día, `m` mes e `Y` año, a partir de la información incluida en el data frame. Utiliza una función de **DPLYR** que permita conseguir este propósito. Elimina las variables originales involucradas en la creación de la nueva variable.
+**Incorpora una nueva variable a `flights` denominado `Full_Date` que sea de tipo `character` que incorpore una cadena de texto de la forma `d-m-Y`. Donde `d` indica día, `m` mes e `Y` año, a partir de la información incluida en el data frame. Utiliza una función de `DPLYR` que permita conseguir este propósito. Elimina las variables originales involucradas en la creación de la nueva variable**
 
-```{r }
+Para crear la variable `Full_Date`, la función propia de la libreria `dplyr` que permite añadir una nueva columna al dataframe es `mutate()`. Como esta debe respetar el formato indicado en el enunciado, con `paste()` concatenamos los valores de las variables `day`, `month` y `year`, separados mediante `-`, generando una cadena de texto. 
 
+```{r}
+flights <- flights %>%
+  mutate(Full_Date = paste(day, month, year, sep = "-")) %>% # creamos la col
+  select(-day, -month, -year) # eliminamos las var utilizadas para Full_Date
 
+str(flights)
 ```
-
 ### Ejercicio 11
 
 Utilizando las funciones `group_by`, `summarise` y `filter`, crea un data frame donde se calcule el número de vuelos (`Num_flights`), la distancia media recorrida (`Mean_distance`) y la distancia total recorrida (`Total_distance`) para cada uno de los aviones (`tailnum`) presentes en el conjunto `flights`. Descarta aquellos registros del data frame en los que la variable `tailnum` tenga un valor NA. Utiliza el operador pipe para enlazar las funciones. Almacena el data frame en una variable denominada `Distances_plane`.
