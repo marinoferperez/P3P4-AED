@@ -508,10 +508,22 @@ str(flights)
 ```
 ### Ejercicio 11
 
-Utilizando las funciones `group_by`, `summarise` y `filter`, crea un data frame donde se calcule el número de vuelos (`Num_flights`), la distancia media recorrida (`Mean_distance`) y la distancia total recorrida (`Total_distance`) para cada uno de los aviones (`tailnum`) presentes en el conjunto `flights`. Descarta aquellos registros del data frame en los que la variable `tailnum` tenga un valor NA. Utiliza el operador pipe para enlazar las funciones. Almacena el data frame en una variable denominada `Distances_plane`.
+**Utilizando las funciones `group_by`, `summarise` y `filter`, crea un data frame donde se calcule el número de vuelos (`Num_flights`), la distancia media recorrida (`Mean_distance`) y la distancia total recorrida (`Total_distance`) para cada uno de los aviones (`tailnum`) presentes en el conjunto `flights`. Descarta aquellos registros del data frame en los que la variable `tailnum` tenga un valor NA. Utiliza el operador pipe para enlazar las funciones. Almacena el data frame en una variable denominada `Distances_plane`.**
+
+Primero, descartamos los registros cuya matricula sea `NA` mediante `filter()` y agrupamos los vuelos por avión con `group_by()`.
+A partir de aqui, se calculan las medidas estadísticas solicitadas con `summarise()`, añadiendo `na.rm = TRUE` para evitar obtener resultados nulos ya que, cualquier operación con un NA es NA. 
 
 ```{r }
+Distances_plane <- flights %>%
+  filter(!is.na(tailnum)) %>% # nos quedamos con los registros en los que la matricula no es NA
+  group_by(tailnum) %>%
+  summarise(
+    Num_flights = n(), # devuelve el tamaño del group by
+    Mean_distance = mean(distance, na.rm = TRUE),
+    Total_distance = sum(distance, na.rm = TRUE)
+  )
 
+head(Distances_plane)
 ```
 
 # Ejercicios Extra
