@@ -583,9 +583,41 @@ Esto se puede hacer fácilmente con las librerías `plyr` y `dplyr`.
 
 En la librería *tidyr* hay varios conjuntos de datos. **table1** es un conjunto *tidy* pero **table5** no lo es. Realiza las operaciones necesarias para obtener **table1** a partir de **table5**. También deben coincidir los tipos de datos de las columnas.
 
+Antes de procesar `table5`, visualizamos el contenido de ambos datasets para detectar las posibles diferencias y/o coincidencias entre ellos.
+
+Para ello, usamos `head()` y `str()`.
+
 ```{r}
+head(table1)
+head(table5)
 
+str(table1)
+str(table5)
+```
+Observamos que, tal y como indica el enunciado, `table1` tiene una estructura *tidy*, con las variables `country`, `year`, `cases` y `population` en columnas independientes.
 
+En cambio, en `table5` el año aparece dividido entre `century` y `year`, mientras que `rate` almacena el número de casos (`cases` en `table1`) y la población total (`population` en `table2`), separados por `/`. Además, como los tipos de variables tambien deben coincidir, con `str()` podemos ver que en `table5` todas las variables son de tipo `character` mientras que en `table1`, todas son numéricas excepto `country`, que si es `character`. 
+
+Por tanto, vamos a unir el siglo y año en una única variable llamada `year` y de tipo numérico, como en `table1`. Con `separate()`, obtenemos los casos y la población por separado, indicando el separador que los divide, y finalmente, las convertimos a entero.
+
+```{r}
+table5_tidy <- table5 %>%
+  # unimos siglo y año en una única variable, como en table1
+  unite("year", century, year, sep = "") %>%
+  # Separamos los casos y la población
+  separate(rate, into = c("cases", "population"), sep = "/") %>%
+  # Convertimos las variables al mismo tipo que en table1
+  mutate(
+    year = as.integer(year),
+    cases = as.integer(cases),
+    population = as.integer(population)
+  )
+
+head(table5_tidy)
+str(table5_tidy)
+```
+```{r}
+all.equal(table1, table5_tidy)
 ```
 
 ## DPLYR
