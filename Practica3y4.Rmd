@@ -2,15 +2,15 @@
 title: "Práctica 3 y 4. Preparación y manejo de Datos"
 subtitle: "Análisis Exploratorio de Datos, Máster en Ciencia de Datos - UV"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    number_sections: no
   html_document:
     echo: yes
     number_sections: no
     theme: lumen
     toc: yes
-  pdf_document:
-    toc: yes
-    toc_depth: 3
-    number_sections: no
 ---
 
 ```{r setup, cache=F, echo=F, message=F, warning=F, tidy=F}
@@ -697,17 +697,7 @@ Utilizando los conjuntos de datos `flights` y `planes` responde a las siguientes
 1.  ¿Qué avión(tailnum) ha realizado más vuelos entre la ruta JFK (origen) y SFO (destino), en relación a su fecha de construcción `year`)? ¿de qué compañia aérea(carrier) es? ¿Cuál es el modelo de avión y cuántos asientos tiene?
 
 ```{r}
-str(flights)
-# 1
-JFK_SFO <- flights %>%
-  filter(origin == "JFK", dest == "SFO", !is.na(tailnum)) %>%
-  group_by(tailnum, carrier) %>%
-  summarise(Num_flights = n(), .groups = "drop") %>%
-  arrange(desc(Num_flights)) %>%
-  left_join(planes, by = "tailnum") %>%
-  select(tailnum, Num_flights, carrier, year, model, seats)
 
-head(JFK_SFO)
 ```
 
 2.  Indica cuántas compañias aéreas (carrier) operan la ruta entre Nueva York (JFK) y Los Ángeles (LAX). ¿Cuántos aviones distintos han realizado esta ruta ?. Realiza un histograma de las duraciones de los vuelos entre ambos aeropuertos. ¿Son todos vuelos directos ?
@@ -728,33 +718,11 @@ JFK_LAX
 Obtenemos **5 compañias** distintas y **254 aviones distintos**.
 
 ```{r}
-# 2 Histograma
-ggplot(JFK_LAX, aes(x = air_time)) +
-  geom_histogram(binwidth = 10, color = "black", fill = "steelblue") +
-  labs(
-    title = "Duración de los vuelos entre JFK y LAX",
-    x = "Duración del vuelo (minutos)",
-    y = "Frecuencia"
-  )
+
 ```
 
 3.  ¿Qué companía aérea elegirías si tienes que ir desde La Guardia (LGA) a Denver (DEN) en el menor tiempo posible (en promedio), considerando los retrasos de salida y llegada. ¿Cuál es la duración media del vuelo (en horas)?
 
 ```{r}
 
-# 3
-LGA_DEN <- flights %>%
-  filter(origin == "LGA", dest == "DEN") %>%
-  group_by(carrier) %>%
-  summarise(
-    Duracion_media = mean(air_time, na.rm = TRUE),
-    Retraso_salida = mean(dep_delay, na.rm = TRUE),
-    Retraso_llegada = mean(arr_delay, na.rm = TRUE)
-  ) %>%
-  mutate(
-    Tiempo_estimado = (Duracion_media + Retraso_llegada) / 60
-  ) %>%
-  arrange(Tiempo_estimado)
-
-LGA_DEN
 ```
