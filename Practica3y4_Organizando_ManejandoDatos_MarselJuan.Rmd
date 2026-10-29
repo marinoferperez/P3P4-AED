@@ -469,6 +469,10 @@ Comprobamos si ambos tienen el mismo contenido y observamos que **sí lo compart
 
 **- En el data frame `flights` quédate con todas las variables excepto `time_hour` y las variables que terminan con la palabra "time".**
 
+Utilizamos la función `select()` de `dplyr` para eliminar las variables que no nos interesan. Para ello, añadimos un signo negativo `-` como prefijo de la variable que queremos eliminar. 
+
+Por otro lado, como queremos eliminar todo aquello que acabe en **"time"**, hacemos uso de la función `ends_with()`, que como indica, selecciona toda aquella cadena que acabe en el string indicado.
+
 ```{r }
 flights <- flights %>%
   select(-time_hour, -ends_with("time"))
@@ -485,6 +489,7 @@ Finalmente, comprobamos mediante `names()` que las variables indicadas se han el
 
 ```{r }
 names(flights)
+
 names(planes)
 ```
 
