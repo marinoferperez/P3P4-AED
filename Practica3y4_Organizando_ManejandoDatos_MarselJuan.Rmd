@@ -377,7 +377,7 @@ Vamos a cargar el conjunto de datos `VuelosNY.Rdata` que contiene dos data frame
 ```{r, include=FALSE}
 library(dplyr)
 #library(dbplyr)
-rm(list=ls())
+# rm(list=ls())
 ```
 
 ### Ejercicio 5
@@ -534,14 +534,37 @@ Volvemos al ejemplo del conjunto `Billboard` para ilustrar este caso. Si nos fij
 
 ### Ejercicio Extra 1
 
-Separa los datos *tidy* que teníamos en el ejercicio 2 en dos tablas (data frames) tal y como se describe en el párrafo anterior y empleando la función `unique` para eliminar repeticiones.
+**Separa los datos *tidy* que teníamos en el ejercicio 2 en dos tablas (data frames) tal y como se describe en el párrafo anterior y empleando la función `unique` para eliminar repeticiones.**
 
-Opcionalmente se puede crear un identificador, `id`, asociado al nombre de la canción (`track`), y en la tabla de ranking solo usaremos este identificador en lugar del nombre de la canción.
+**Opcionalmente se puede crear un identificador, `id`, asociado al nombre de la canción (`track`), y en la tabla de ranking solo usaremos este identificador en lugar del nombre de la canción.**
 
 ```{r}
+head(billboard_tidy2)
+```
 
+En primer lugar, creamos el primer dataset `canciones` seleccionando las variables indicadas en el enunciado con `select()` y obviando el resto. Seguidamente, sobre el resultado aplicamos `unique()` para eliminar todos los duplicados y, finalmente, creamos una nueva columna `id` cuyos valores se corresponden con un identificador asociado a cada canción, obtenido mediante `row_number()`.
 
+```{r}
+# seleccionamos los datos de cada canción y eliminamos duplicados
+canciones <- billboard_tidy2 %>%
+  select(artist, track, time) %>%
+  unique() %>%
+  mutate(id = row_number()
+)
+```
 
+Para la segunda tabla, volcamos el contenido de `billboard_tidy` y, mediante `left_join()`, incorporamos el identificador `id` de la tabla `canciones`, relacionando ambas tablas a través de las variables comunes (`artist`, `track` y `time`).
+
+Finalmente, con `select()` nos quedamos únicamente `id`, `week` y `rank`, evitando repetir la información de las canciones en cada observación del ranking.
+
+```{r}
+ranking <- billboard_tidy2 %>%
+  left_join(canciones, by = c("artist", "track", "time")) %>%
+  select(id, week, rank)
+```
+```{r}
+head(canciones)
+head(ranking)
 ```
 
 ## TidyR. Una única unidad de observación almacenada en varias tablas
