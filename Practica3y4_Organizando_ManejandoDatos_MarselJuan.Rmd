@@ -449,18 +449,26 @@ Como resultado, obtenemos un nuevo dataset **flights.f**.
 
 ### Ejercicio 8
 
-Reasigna los nombres de los data frames `planes.f` y `flights.f` a los nombres originales `planes` y `flights`.
+**Reasigna los nombres de los data frames `planes.f` y `flights.f` a los nombres originales `planes` y `flights`.**
+
+Resolvemos el ejercicio volcando directamente el contenido de `planes.f` y `flights.f` sobre `planes` y `flights`.
 
 ```{r }
+planes <- planes.f
+flights <- flights.f
 
+all.equal(planes, planes.f)
+all.equal(flights, flights.f)
 ```
+
+Comprobamos si ambos tienen el mismo contenido y observamos que **sí lo comparten**.
 
 ### Ejercicio 9
 
-Existen variables que, a priori, no tienen demasiado interés para el estudio que queremos llevar a cabo, en particular queremos eliminar:
+**Existen variables que, a priori, no tienen demasiado interés para el estudio que queremos llevar a cabo, en particular queremos eliminar:**
 
-- En el data frame `flights` quédate con todas las variables excepto `time_hour` y las variables que terminan con la palabra "time".
-- En el data frame `planes` quédate con todas las variables excepto `speed` y `type`.
+**- En el data frame `flights` quédate con todas las variables excepto `time_hour` y las variables que terminan con la palabra "time".**
+**- En el data frame `planes` quédate con todas las variables excepto `speed` y `type`.**
 
 ```{r }
 
