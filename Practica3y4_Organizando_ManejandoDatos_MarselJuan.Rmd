@@ -437,8 +437,15 @@ head(planes.f)
 Crea un data frame denominado `flights.f` que contenga los vuelos que involucren a los aviones presentes en el data frame `planes.f`. Para ello utiliza algunas de las funciones de **XXX_join** y la variable `tailnum` que es común en ambos data frames.
 
 ```{r }
+flights.f <- flights %>%
+  semi_join(planes.f, by = "tailnum")
 
+head(flights.f)
 ```
+
+La función `semi_join()` incluye filas de `x` que coinciden con `y` pero solo mantiene las de `x`. Como solamente queremos seleccionar vuelos, no añadir columnas de **planes.f**, nos permite seleccionar unicamente aquellos vuelos cuyos aviones se encuentren en **planes.f**, relacionando ambos datasets mediante la variable `tailnum`, que ya vimos anteriormente que es común entre ellos. 
+
+Como resultado, obtenemos un nuevo dataset **flights.f**.
 
 ### Ejercicio 8
 
