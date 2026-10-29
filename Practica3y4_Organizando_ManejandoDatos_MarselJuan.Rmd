@@ -423,46 +423,20 @@ airbus
 ```
 
 ```{r }
+# excluimos el fabricante indicado y seleccionamos aviones de 90 a 210 asientos
 planes.f <- planes %>%
   filter(!manufacturer %in% mcdonnell) %>%
-  filter(seats >= 90, seats <= 210) %>%
-  mutate(manufacturer = ifelse(manufacturer %in% airbus,
-                               "AIRBUS COMP", manufacturer))
+  filter(seats >= 90, seats <= 210) %>% # unificamos las denominaciones de AIRBUS en AIRBUS COMP
+  mutate(manufacturer = ifelse(manufacturer %in% airbus, "AIRBUS COMP", manufacturer))
 
 head(planes.f)
 ```
-
-# Comprobamos las denominaciones de los fabricantes
-unique(planes$manufacturer)
-
-# Aplicamos los criterios de exclusión y selección
-planes.f <- planes %>%
-  # Excluimos los aviones fabricados por McDonnell Douglas
-  filter(
-    manufacturer != "MCDONNELL DOUGLAS",
-    manufacturer != "MCDONNELL DOUGLAS AIRCRAFT CO"
-  ) %>%
-  # Seleccionamos los aviones con entre 90 y 210 asientos
-  filter(seats >= 90, seats <= 210) %>%
-  # Unificamos las denominaciones del fabricante AIRBUS
-  mutate(
-    manufacturer = ifelse(
-      manufacturer %in% c("AIRBUS", "AIRBUS INDUSTRIE"),
-      "AIRBUS COMP",
-      manufacturer
-    )
-  )
-
-# Comprobamos el resultado
-head(planes.f)
-unique(planes.f$manufacturer)
 
 ### Ejercicio 7
 
 Crea un data frame denominado `flights.f` que contenga los vuelos que involucren a los aviones presentes en el data frame `planes.f`. Para ello utiliza algunas de las funciones de **XXX_join** y la variable `tailnum` que es común en ambos data frames.
 
 ```{r }
-
 
 ```
 
