@@ -468,10 +468,24 @@ Comprobamos si ambos tienen el mismo contenido y observamos que **sí lo compart
 **Existen variables que, a priori, no tienen demasiado interés para el estudio que queremos llevar a cabo, en particular queremos eliminar:**
 
 **- En el data frame `flights` quédate con todas las variables excepto `time_hour` y las variables que terminan con la palabra "time".**
+
+```{r }
+flights <- flights %>%
+  select(-time_hour, -ends_with("time"))
+```
+
 **- En el data frame `planes` quédate con todas las variables excepto `speed` y `type`.**
 
 ```{r }
+planes <- planes %>%
+  select(-speed, -type)
+```
 
+Finalmente, comprobamos mediante `names()` que las variables indicadas se han eliminado correctamente.
+
+```{r }
+names(flights)
+names(planes)
 ```
 
 ### Ejercicio 10
