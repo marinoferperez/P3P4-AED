@@ -327,7 +327,7 @@ weather_tidy <- raw %>%
     values_drop_na = TRUE
   ) %>% # variable dia a tipo entero
   mutate( 
-    dia = as.integer(dia),
+    dia = as.integer(dia)
   ) %>% # las temperaturas máximas y mínimas separadas en dos columnas
   pivot_wider( 
     names_from = element,
@@ -337,6 +337,7 @@ weather_tidy <- raw %>%
 head(weather_tidy)
 ```
 ```{r}
+# year, month y dia en una única variable fecha
 weather_tidy <- weather_tidy %>%
   unite("fecha", year, month, dia, sep = "-") %>%
   mutate(fecha = as.Date(fecha))
@@ -377,28 +378,84 @@ Vamos a cargar el conjunto de datos `VuelosNY.Rdata` que contiene dos data frame
 library(dplyr)
 #library(dbplyr)
 rm(list=ls())
-load("./data/VuelosNY.Rdata")
 ```
 
 ### Ejercicio 5
 
-Muestra las primeras muestras de ambos data frames para hacerte una idea de las variables que contienen. ¿Qué diferencia existe entre la información mostrada en ambos data frames?
+**Muestra las primeras muestras de ambos data frames para hacerte una idea de las variables que contienen. ¿Qué diferencia existe entre la información mostrada en ambos data frames?**
+
+Cargamos el archivo .Rdata sobre una variable para visualizar que lo compone.
+
+```{r}
+data <- load("./data/VuelosNY.Rdata")
+data
+```
+
+Observamos que está compuesto por dos data frames distintos.
 
 ```{r }
+head(flights)
+head(planes)
 
+dim(flights)
+dim(planes)
 ```
+Tras visualizar el contenido de ambos, vemos que `flights` contiene **19 variables** relacionadas con **vuelos**, como la fecha o las horas de salida y llegada. 
+
+Por otro lado, `planes` contiene **9 variables** que describen las **características de los aviones**. Por tanto, la principal diferencia es que cada dataset no representa lo mismo. No obstante, si que pueden relacionarse por medio de la variable `tailnum`, que refiere a la matrícula del avión, presente tanto en `planes` como en `flights`.
 
 ### Ejercicio 6
 
-En nuestro estudio queremos aplicar una serie de criterios de exclusión sobre las muestras de ambos data frames. En concreto queremos eliminar los aviones fabricados por el fabricante MCDONELL DOUGLAS (vigila si existe más de una denominación de esta compañía en la variable `manufacturer`). Del mismo modo, queremos seleccionar aquellos aviones en los que el número de asientos esté entre 90 y 210 (variable `seats`). Aplica las dos operaciones de filtrado secuencialmente utilizando el operador *pipe* y almacena el data frame resultante en `planes.f`. En el data frame resultante unifica las denominaciones del fabricante `AIRBUS` bajo la denominación `"AIRBUS COMP"`.
+**En nuestro estudio queremos aplicar una serie de criterios de exclusión sobre las muestras de ambos data frames. En concreto queremos eliminar los aviones fabricados por el fabricante MCDONELL DOUGLAS (vigila si existe más de una denominación de esta compañía en la variable `manufacturer`). Del mismo modo, queremos seleccionar aquellos aviones en los que el número de asientos esté entre 90 y 210 (variable `seats`). Aplica las dos operaciones de filtrado secuencialmente utilizando el operador *pipe* y almacena el data frame resultante en `planes.f`. En el data frame resultante unifica las denominaciones del fabricante `AIRBUS` bajo la denominación `"AIRBUS COMP"`.**
 
-- Nota: Revisar el uso de la función filter vista en clase y tener en cuenta los operadores de comparación: igual ==, distinto !=, mayor \>, mayor o igual \>=, menor \<, menor o igual \<=.
+**- Nota: Revisar el uso de la función filter vista en clase y tener en cuenta los operadores de comparación: igual ==, distinto !=, mayor \>, mayor o igual \>=, menor \<, menor o igual \<=.**
+
+Como se nos pide excluir los aviones fabricados por una compañía concreta, utilizamos `unique()` para obtener los distintos fabricantes presentes en el conjunto de datos. Seguidamente, con `grep()` identificamos todas las denominaciones que contienen **MCDONNELL** y comprobar si la compañía aparece registrada bajo diferentes nombres.
+
+De la misma manera, buscamos las denominaciones que contienen **AIRBUS**, ya que posteriormente vamos a unificarlas bajo un mismo nombre.
 
 ```{r }
+mcdonnell <- grep("MCDONNELL", unique(planes$manufacturer), value = TRUE)
+airbus <- grep("AIRBUS", unique(planes$manufacturer), value = TRUE)
 
-
-
+mcdonnell
+airbus
 ```
+
+```{r }
+planes.f <- planes %>%
+  filter(!manufacturer %in% mcdonnell) %>%
+  filter(seats >= 90, seats <= 210) %>%
+  mutate(manufacturer = ifelse(manufacturer %in% airbus,
+                               "AIRBUS COMP", manufacturer))
+
+head(planes.f)
+```
+
+# Comprobamos las denominaciones de los fabricantes
+unique(planes$manufacturer)
+
+# Aplicamos los criterios de exclusión y selección
+planes.f <- planes %>%
+  # Excluimos los aviones fabricados por McDonnell Douglas
+  filter(
+    manufacturer != "MCDONNELL DOUGLAS",
+    manufacturer != "MCDONNELL DOUGLAS AIRCRAFT CO"
+  ) %>%
+  # Seleccionamos los aviones con entre 90 y 210 asientos
+  filter(seats >= 90, seats <= 210) %>%
+  # Unificamos las denominaciones del fabricante AIRBUS
+  mutate(
+    manufacturer = ifelse(
+      manufacturer %in% c("AIRBUS", "AIRBUS INDUSTRIE"),
+      "AIRBUS COMP",
+      manufacturer
+    )
+  )
+
+# Comprobamos el resultado
+head(planes.f)
+unique(planes.f$manufacturer)
 
 ### Ejercicio 7
 
